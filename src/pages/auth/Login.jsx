@@ -38,126 +38,154 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-indigo-700 to-purple-800 flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse" style={{animationDelay: '2s'}}></div>
-        <div className="absolute top-40 left-40 w-80 h-80 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse" style={{animationDelay: '4s'}}></div>
-      </div>
-      
-      <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 w-full max-w-md relative z-10 animate-fade-in border border-white/20">
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4 shadow-lg">
+    <div className="min-h-screen flex">
+      {/* Left Section - Hidden on mobile */}
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-indigo-600 to-blue-700 p-12 flex-col justify-center items-center text-white relative overflow-hidden">
+        {/* Decorative elements */}
+        <div className="absolute top-20 right-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 left-20 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl"></div>
+        
+        <div className="relative z-10 text-center max-w-md">
+          {/* Icon */}
+          <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center text-5xl mx-auto mb-8 shadow-2xl">
             🎓
           </div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent mb-2">
-            Course Selection System
+          
+          {/* Title */}
+          <h1 className="text-4xl font-bold mb-4">
+            Student Course Scheduler
           </h1>
-          <p className="text-slate-600">Sign in to continue your journey</p>
+          
+          {/* Tagline */}
+          <p className="text-lg text-indigo-100 leading-relaxed">
+            Plan your academic journey with ease. Browse courses, manage your schedule, and achieve your goals.
+          </p>
         </div>
+      </div>
 
-        <form onSubmit={handleLogin} className="space-y-6">
-          <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
-              Username
-            </label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-              className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter username"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
-              Password
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter password"
-            />
-          </div>
-
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-              {error}
+      {/* Right Section - Login Form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50">
+        <div className="w-full max-w-md">
+          {/* Login Card */}
+          <div className="bg-white rounded-xl shadow-lg p-8 transition-all duration-300 hover:shadow-xl">
+            <div className="mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                Welcome Back
+              </h2>
+              <p className="text-gray-600">
+                Sign in to continue to your account
+              </p>
             </div>
-          )}
 
-          <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-3">
-              Select Your Role
-            </label>
-            <div className="space-y-3">
-              <label
-                className={`flex items-center gap-3 p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                  selectedRole === 'student'
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-slate-200 hover:border-slate-300'
-                }`}
-              >
+            <form onSubmit={handleLogin} className="space-y-5">
+              {/* Username Input */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Username
+                </label>
                 <input
-                  type="radio"
-                  name="role"
-                  value="student"
-                  checked={selectedRole === 'student'}
-                  onChange={(e) => setSelectedRole(e.target.value)}
-                  className="w-5 h-5 text-blue-600"
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+                  placeholder="Enter username"
                 />
-                <div>
-                  <div className="font-semibold text-slate-800">Student</div>
-                  <div className="text-sm text-slate-600">
-                    Browse and register for courses
-                  </div>
-                </div>
-              </label>
+              </div>
 
-              <label
-                className={`flex items-center gap-3 p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                  selectedRole === 'admin'
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-slate-200 hover:border-slate-300'
-                }`}
-              >
+              {/* Password Input */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Password
+                </label>
                 <input
-                  type="radio"
-                  name="role"
-                  value="admin"
-                  checked={selectedRole === 'admin'}
-                  onChange={(e) => setSelectedRole(e.target.value)}
-                  className="w-5 h-5 text-blue-600"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+                  placeholder="Enter password"
                 />
-                <div>
-                  <div className="font-semibold text-slate-800">Admin</div>
-                  <div className="text-sm text-slate-600">
-                    Manage courses and schedules
-                  </div>
+              </div>
+
+              {/* Error Message */}
+              {error && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                  {error}
                 </div>
-              </label>
+              )}
+
+              {/* Role Selection */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Select Your Role
+                </label>
+                <div className="space-y-3">
+                  <label
+                    className={`flex items-center gap-3 p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 ${
+                      selectedRole === 'student'
+                        ? 'border-indigo-500 bg-indigo-50'
+                        : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="role"
+                      value="student"
+                      checked={selectedRole === 'student'}
+                      onChange={(e) => setSelectedRole(e.target.value)}
+                      className="w-5 h-5 text-indigo-600"
+                    />
+                    <div>
+                      <div className="font-semibold text-gray-800">Student</div>
+                      <div className="text-sm text-gray-600">
+                        Browse and register for courses
+                      </div>
+                    </div>
+                  </label>
+
+                  <label
+                    className={`flex items-center gap-3 p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 ${
+                      selectedRole === 'admin'
+                        ? 'border-indigo-500 bg-indigo-50'
+                        : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="role"
+                      value="admin"
+                      checked={selectedRole === 'admin'}
+                      onChange={(e) => setSelectedRole(e.target.value)}
+                      className="w-5 h-5 text-indigo-600"
+                    />
+                    <div>
+                      <div className="font-semibold text-gray-800">Admin</div>
+                      <div className="text-sm text-gray-600">
+                        Manage courses and schedules
+                      </div>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              {/* Login Button */}
+              <button
+                type="submit"
+                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              >
+                Login
+              </button>
+            </form>
+
+            {/* Demo Credentials */}
+            <div className="mt-6 p-4 bg-gray-100 rounded-lg">
+              <p className="text-sm font-semibold text-gray-700 mb-2">Demo Credentials:</p>
+              <div className="text-xs text-gray-600 space-y-1">
+                <div><strong>Student:</strong> username: <code className="bg-white px-2 py-1 rounded">student</code> password: <code className="bg-white px-2 py-1 rounded">student123</code></div>
+                <div><strong>Admin:</strong> username: <code className="bg-white px-2 py-1 rounded">admin</code> password: <code className="bg-white px-2 py-1 rounded">admin123</code></div>
+              </div>
             </div>
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white font-semibold py-3 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] btn-shine"
-          >
-            Login
-          </button>
-        </form>
-
-        <div className="mt-6 p-4 bg-slate-100 rounded-lg">
-          <p className="text-sm font-semibold text-slate-700 mb-2">Demo Credentials:</p>
-          <div className="text-xs text-slate-600 space-y-1">
-            <div><strong>Student:</strong> username: <code className="bg-white px-2 py-1 rounded">student</code> password: <code className="bg-white px-2 py-1 rounded">student123</code></div>
-            <div><strong>Admin:</strong> username: <code className="bg-white px-2 py-1 rounded">admin</code> password: <code className="bg-white px-2 py-1 rounded">admin123</code></div>
           </div>
         </div>
       </div>
