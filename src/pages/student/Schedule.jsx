@@ -3,7 +3,10 @@ import ScheduleGrid from '../../components/ScheduleGrid';
 import { useAppContext } from '../../context/AppContext';
 
 const Schedule = () => {
-  const { registeredCourses, unregisterCourse } = useAppContext();
+  const { registeredCourses, dropRequests, requestDrop } = useAppContext();
+
+  const getPendingDrop = (courseId) =>
+    dropRequests.find((r) => r.course.id === courseId && r.status === 'pending');
 
   // Calculate total credits
   const totalCredits = registeredCourses.reduce(
@@ -73,12 +76,21 @@ const Schedule = () => {
                         {course.instructor}
                       </div>
                     </div>
-                    <button
-                      onClick={() => unregisterCourse(course.id)}
-                      className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors"
-                    >
-                      Drop
-                    </button>
+                    {getPendingDrop(course.id) ? (
+                      <button
+                        disabled
+                        className="bg-amber-100 text-amber-700 border border-amber-300 px-4 py-2 rounded-lg font-semibold text-sm cursor-not-allowed"
+                      >
+                        ⏳ Drop Pending
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => requestDrop(course)}
+                        className="bg-red-50 hover:bg-red-600 text-red-600 hover:text-white border border-red-400 hover:border-red-600 px-4 py-2 rounded-lg font-semibold transition-colors text-sm"
+                      >
+                        Request Drop
+                      </button>
+                    )}
                   </div>
                 ))}
               </div>

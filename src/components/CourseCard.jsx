@@ -11,12 +11,12 @@ const CourseCard = ({ course, actionButton, isConflict = false }) => {
         isConflict ? 'border-2 border-red-500 bg-red-50/50' : 'border border-slate-200'
       }`}
     >
-      <div className="flex justify-between items-start mb-4">
-        <div>
+      <div className="flex justify-between items-start mb-4 gap-3">
+        <div className="min-w-0 flex-1">
           <h3 className="text-lg font-bold text-slate-800 mb-1">{course.courseName}</h3>
           <p className="text-sm text-slate-500 font-mono bg-slate-100 px-2 py-1 rounded inline-block">{course.courseCode}</p>
         </div>
-        <span className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-3 py-1.5 rounded-full text-sm font-semibold shadow-md">
+        <span className="shrink-0 self-start bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-3 py-1.5 rounded-full text-sm font-semibold shadow-md whitespace-nowrap">
           {course.credits} Credits
         </span>
       </div>
