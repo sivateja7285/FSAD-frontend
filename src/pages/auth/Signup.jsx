@@ -21,7 +21,6 @@ const Signup = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    // Clear field error on change
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: '' }));
   };
 
@@ -51,228 +50,185 @@ const Signup = () => {
       setErrors(validationErrors);
       return;
     }
-
-    // Register and auto-login
     login(selectedRole);
     navigate(selectedRole === 'admin' ? '/admin/dashboard' : '/student/dashboard');
   };
 
+  const inputBase = 'w-full px-4 py-3 bg-slate-50 border rounded-xl text-slate-800 placeholder:text-slate-400 text-sm focus:outline-none focus:ring-2 focus:bg-white transition-all';
   const inputClass = (field) =>
-    `w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-200 ${
+    `${inputBase} ${
       errors[field]
         ? 'border-red-400 focus:ring-red-300 bg-red-50'
-        : 'border-gray-300 focus:ring-indigo-500 focus:border-transparent'
+        : 'border-slate-200 focus:ring-indigo-400 focus:border-transparent'
     }`;
 
   return (
     <div className="min-h-screen flex">
-      {/* Left Section */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-indigo-600 to-blue-700 p-12 flex-col justify-center items-center text-white relative overflow-hidden">
-        <div className="absolute top-20 right-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 left-20 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl"></div>
 
-        <div className="relative z-10 text-center max-w-md">
-          <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center text-5xl mx-auto mb-8 shadow-2xl">
-            🎓
+      {/* ── Left Panel ── */}
+      <div className="hidden lg:flex lg:w-1/2 relative flex-col justify-between overflow-hidden bg-gradient-to-br from-slate-900 via-indigo-950 to-blue-900 p-12 text-white">
+        <div className="absolute top-0 left-0 w-full h-full">
+          <div className="absolute top-[-80px] right-[-80px] w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl" />
+          <div className="absolute bottom-[-60px] left-[-60px] w-80 h-80 bg-blue-500/20 rounded-full blur-3xl" />
+          <div className="absolute top-1/2 left-1/3 w-48 h-48 bg-cyan-400/10 rounded-full blur-2xl" />
+        </div>
+
+        {/* Logo */}
+        <div className="relative z-10 inline-flex items-center gap-2.5 bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-md border border-white/20 rounded-2xl px-4 py-2.5 shadow-xl shadow-cyan-500/20">
+          <div className="w-10 h-10 bg-white/10 backdrop-blur border border-white/20 rounded-xl flex items-center justify-center text-2xl shadow-lg">🎓</div>
+          <span className="text-xl font-bold tracking-tight">CourseCrafter</span>
+        </div>
+
+        {/* Center content */}
+        <div className="relative z-10 space-y-8">
+          <div>
+            <h1 className="text-5xl font-extrabold leading-tight mb-4">
+              Begin Your<br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-blue-400">B.Tech Journey</span><br />
+              With Confidence.
+            </h1>
+            <p className="text-slate-300 text-base leading-relaxed max-w-sm">
+              Join thousands of students managing their semesters effortlessly with CourseCrafter.
+            </p>
           </div>
-          <h1 className="text-4xl font-bold mb-4">Join CourseCrafter</h1>
-          <p className="text-lg text-indigo-100 leading-relaxed">
-            Create your account in seconds and start planning your academic
-            journey today.
-          </p>
 
-          <div className="mt-10 grid grid-cols-3 gap-6 text-center">
+          {/* Steps */}
+          <div className="space-y-3">
             {[
-              { icon: '📚', label: 'Browse Courses' },
-              { icon: '📅', label: 'Build Schedule' },
-              { icon: '🎯', label: 'Track Goals' }
-            ].map(({ icon, label }) => (
-              <div key={label} className="bg-white/10 rounded-xl p-4">
-                <div className="text-3xl mb-2">{icon}</div>
-                <div className="text-sm font-medium text-indigo-100">{label}</div>
+              { step: '01', text: 'Create your student or admin account' },
+              { step: '02', text: 'Browse and register for your courses' },
+              { step: '03', text: 'Build a conflict-free weekly schedule' },
+            ].map(({ step, text }) => (
+              <div key={step} className="flex items-center gap-4 bg-white/8 border border-white/10 rounded-xl px-4 py-3 backdrop-blur-sm">
+                <span className="text-xs font-black text-cyan-400 bg-cyan-400/10 border border-cyan-400/30 rounded-lg px-2 py-1 shrink-0">{step}</span>
+                <span className="text-sm text-slate-200 font-medium">{text}</span>
               </div>
             ))}
           </div>
+
+        </div>
+
+        <div className="relative z-10">
+          <p className="text-xs text-slate-500 italic">"The beautiful thing about learning is that no one can take it away."</p>
         </div>
       </div>
 
-      {/* Right Section */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50 overflow-y-auto">
-        <div className="w-full max-w-md">
-          <div className="bg-white rounded-xl shadow-lg p-8 transition-all duration-300 hover:shadow-xl">
-            <div className="mb-6">
-              <h2 className="text-3xl font-bold text-gray-900 mb-1">
-                Create Account
-              </h2>
-              <p className="text-gray-500 text-sm">
-                Already have an account?{' '}
-                <Link
-                  to="/login"
-                  className="text-indigo-600 hover:text-indigo-700 font-semibold"
-                >
-                  Sign in
-                </Link>
+      {/* ── Right Panel ── */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50/30 p-6 overflow-y-auto">
+        <div className="w-full max-w-md py-8">
+
+          {/* Mobile logo */}
+          <div className="flex justify-center mb-8 lg:hidden">
+            <div className="flex items-center gap-2">
+              <span className="text-3xl">🎓</span>
+              <span className="text-2xl font-extrabold text-indigo-700">CourseCrafter</span>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-3xl shadow-2xl shadow-indigo-100 border border-slate-100 p-8">
+            <div className="mb-7">
+              <h2 className="text-3xl font-extrabold text-slate-900">Create Account 🚀</h2>
+              <p className="text-slate-500 text-sm mt-1.5">
+                Already registered?{' '}
+                <Link to="/login" className="text-indigo-600 hover:text-indigo-700 font-bold hover:underline">Sign in</Link>
               </p>
             </div>
 
             <form onSubmit={handleSignup} className="space-y-4" noValidate>
+
               {/* Full Name */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="John Smith"
-                  className={inputClass('name')}
-                />
-                {errors.name && (
-                  <p className="text-red-500 text-xs mt-1">{errors.name}</p>
-                )}
+                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">Full Name</label>
+                <input type="text" name="name" value={formData.name} onChange={handleChange}
+                  placeholder="e.g. Arjun Sharma" className={inputClass('name')} />
+                {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
               </div>
 
               {/* Email */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Email Address
-                </label>
+                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">Email Address</label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                    ✉️
-                  </span>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="john@example.com"
-                    className={inputClass('email') + ' pl-10'}
-                  />
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm">✉️</span>
+                  <input type="email" name="email" value={formData.email} onChange={handleChange}
+                    placeholder="arjun@college.edu" className={inputClass('email') + ' pl-11'} />
                 </div>
-                {errors.email && (
-                  <p className="text-red-500 text-xs mt-1">{errors.email}</p>
-                )}
+                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
               </div>
 
               {/* Username */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Username
-                </label>
-                <input
-                  type="text"
-                  name="username"
-                  value={formData.username}
-                  onChange={handleChange}
-                  placeholder="johnsmith"
-                  className={inputClass('username')}
-                />
-                {errors.username && (
-                  <p className="text-red-500 text-xs mt-1">{errors.username}</p>
-                )}
-              </div>
-
-              {/* Password */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Password
-                </label>
+                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">Username</label>
                 <div className="relative">
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    placeholder="Min. 6 characters"
-                    className={inputClass('password') + ' pr-11'}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((v) => !v)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                    tabIndex={-1}
-                  >
-                    {showPassword ? '🙈' : '👁️'}
-                  </button>
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-bold">@</span>
+                  <input type="text" name="username" value={formData.username} onChange={handleChange}
+                    placeholder="arjun_sharma" className={inputClass('username') + ' pl-9'} />
                 </div>
-                {errors.password && (
-                  <p className="text-red-500 text-xs mt-1">{errors.password}</p>
-                )}
+                {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
               </div>
 
-              {/* Confirm Password */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Confirm Password
-                </label>
-                <div className="relative">
-                  <input
-                    type={showConfirm ? 'text' : 'password'}
-                    name="confirmPassword"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    placeholder="Re-enter password"
-                    className={inputClass('confirmPassword') + ' pr-11'}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirm((v) => !v)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                    tabIndex={-1}
-                  >
-                    {showConfirm ? '🙈' : '👁️'}
-                  </button>
+              {/* Password row */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">Password</label>
+                  <div className="relative">
+                    <input type={showPassword ? 'text' : 'password'} name="password" value={formData.password}
+                      onChange={handleChange} placeholder="Min. 6 chars" className={inputClass('password') + ' pr-10'} />
+                    <button type="button" onClick={() => setShowPassword((v) => !v)} tabIndex={-1}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-sm">
+                      {showPassword ? '🙈' : '👁️'}
+                    </button>
+                  </div>
+                  {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
                 </div>
-                {errors.confirmPassword && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.confirmPassword}
-                  </p>
-                )}
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">Confirm</label>
+                  <div className="relative">
+                    <input type={showConfirm ? 'text' : 'password'} name="confirmPassword" value={formData.confirmPassword}
+                      onChange={handleChange} placeholder="Re-enter" className={inputClass('confirmPassword') + ' pr-10'} />
+                    <button type="button" onClick={() => setShowConfirm((v) => !v)} tabIndex={-1}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-sm">
+                      {showConfirm ? '🙈' : '👁️'}
+                    </button>
+                  </div>
+                  {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>}
+                </div>
               </div>
 
-              {/* Role Selection */}
+              {/* Role */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  I am a...
-                </label>
+                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">I am a...</label>
                 <div className="grid grid-cols-2 gap-3">
                   {[
                     { value: 'student', icon: '🎓', label: 'Student', desc: 'Browse & register courses' },
-                    { value: 'admin', icon: '⚙️', label: 'Admin', desc: 'Manage courses & schedules' }
+                    { value: 'admin', icon: '🛡️', label: 'Admin', desc: 'Manage courses & approvals' },
                   ].map(({ value, icon, label, desc }) => (
-                    <label
-                      key={value}
-                      className={`flex flex-col items-center gap-1 p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 text-center ${
+                    <label key={value}
+                      className={`relative flex flex-col items-center gap-1 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 text-center ${
                         selectedRole === value
-                          ? 'border-indigo-500 bg-indigo-50'
-                          : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                          ? 'border-indigo-500 bg-indigo-50 shadow-lg shadow-indigo-100'
+                          : 'border-slate-200 hover:border-indigo-300 hover:bg-slate-50'
                       }`}
                     >
-                      <input
-                        type="radio"
-                        name="role"
-                        value={value}
-                        checked={selectedRole === value}
-                        onChange={(e) => setSelectedRole(e.target.value)}
-                        className="sr-only"
-                      />
+                      <input type="radio" name="role" value={value} checked={selectedRole === value}
+                        onChange={(e) => setSelectedRole(e.target.value)} className="sr-only" />
+                      {selectedRole === value && (
+                        <span className="absolute top-2 right-2 w-4 h-4 bg-indigo-500 rounded-full flex items-center justify-center">
+                          <span className="text-white text-[8px] font-black">✓</span>
+                        </span>
+                      )}
                       <span className="text-2xl">{icon}</span>
-                      <span className="font-semibold text-gray-800 text-sm">{label}</span>
-                      <span className="text-xs text-gray-500">{desc}</span>
+                      <span className="font-bold text-slate-800 text-sm">{label}</span>
+                      <span className="text-[11px] text-slate-500 leading-tight">{desc}</span>
                     </label>
                   ))}
                 </div>
               </div>
 
               {/* Submit */}
-              <button
-                type="submit"
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 mt-2"
+              <button type="submit"
+                className="w-full bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-indigo-200 hover:shadow-indigo-300 hover:scale-[1.02] active:scale-100 transition-all duration-200 text-sm tracking-wide mt-1"
               >
-                Create Account
+                Create My Account →
               </button>
             </form>
           </div>
