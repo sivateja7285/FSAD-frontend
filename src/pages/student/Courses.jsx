@@ -5,8 +5,11 @@ import { useAppContext } from '../../context/AppContext';
 import { checkTimeConflict } from '../../utils/checkTimeConflict';
 
 const Courses = () => {
-  const { courseList, registeredCourses, registerCourse, showToast } =
+  const { courseList, registeredCourses, registerCourse, dropRequests, requestDrop, showToast } =
     useAppContext();
+
+  const getPendingDrop = (courseId) =>
+    dropRequests.find((r) => r.course.id === courseId && r.status === 'pending');
   const [searchTerm, setSearchTerm] = useState('');
   const [filterDay, setFilterDay] = useState('All');
 
@@ -106,13 +109,27 @@ const Courses = () => {
             );
             const isConflict = hasConflict(course);
 
+            const pendingDrop = getPendingDrop(course.id);
             return (
               <CourseCard
                 key={course.id}
                 course={course}
                 isConflict={isConflict}
                 actionButton={
-                  !isRegistered && (
+                  isRegistered ? (
+                    pendingDrop ? (
+                      <button disabled className="w-full py-2 rounded-lg font-semibold bg-amber-100 text-amber-700 border border-amber-300 cursor-not-allowed text-sm">
+                        ⏳ Drop Requested — Awaiting Approval
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => requestDrop(course)}
+                        className="w-full py-2 rounded-lg font-semibold border border-red-400 text-red-600 hover:bg-red-600 hover:text-white transition-colors text-sm"
+                      >
+                        Request Drop
+                      </button>
+                    )
+                  ) : (
                     <button
                       onClick={() => handleRegister(course)}
                       disabled={isConflict}

@@ -6,15 +6,15 @@ const Profile = () => {
   const { registeredCourses, showToast } = useAppContext();
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState({
-    firstName: 'John',
-    lastName: 'Doe',
-    studentId: 'STU2024001',
-    email: 'john.doe@university.edu',
-    phone: '+1 (555) 123-4567',
+    firstName: 'raj',
+    lastName: 'B',
+    studentId: '2400030000',
+    email: '2400030000@kluniversity.in',
+    phone: '+91 9876543210',
     department: 'Computer Science',
-    year: '3',
-    gpa: '3.75',
-    address: '123 University Ave, Campus City, ST 12345'
+    year: '2',
+    gpa: '8.75',
+    address: 'vijayawada,kanuru,ap,india'
   });
 
   const [formData, setFormData] = useState(profileData);

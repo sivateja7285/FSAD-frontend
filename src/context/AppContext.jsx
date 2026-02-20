@@ -20,6 +20,12 @@ export const AppProvider = ({ children }) => {
   const [courseList, setCourseList] = useState([]);
   const [registeredCourses, setRegisteredCourses] = useState([]);
 
+  // Drop requests: { id, course, studentName, requestedAt, status: 'pending'|'approved'|'rejected' }
+  const [dropRequests, setDropRequests] = useState(() => {
+    const saved = localStorage.getItem('dropRequests');
+    return saved ? JSON.parse(saved) : [];
+  });
+
   // Toast notification state
   const [toast, setToast] = useState({ show: false, message: '', type: '' });
 
@@ -100,6 +106,62 @@ export const AppProvider = ({ children }) => {
     showToast('Course unregistered successfully', 'success');
   };
 
+  // ── Drop Request actions ──────────────────────────────────────
+  const requestDrop = (course) => {
+    // Prevent duplicate pending requests
+    const alreadyPending = dropRequests.some(
+      (r) => r.course.id === course.id && r.status === 'pending'
+    );
+    if (alreadyPending) {
+      showToast('Drop request already submitted for this course', 'info');
+      return;
+    }
+    const newRequest = {
+      id: Date.now(),
+      course,
+      studentName: 'Student',
+      requestedAt: new Date().toISOString(),
+      status: 'pending',
+    };
+    const updated = [...dropRequests, newRequest];
+    setDropRequests(updated);
+    localStorage.setItem('dropRequests', JSON.stringify(updated));
+    showToast('Drop request submitted. Awaiting admin approval.', 'info');
+  };
+
+  const approveDrop = (requestId) => {
+    const request = dropRequests.find((r) => r.id === requestId);
+    if (!request) return;
+
+    // Read directly from localStorage so it works regardless of who is logged in (admin has empty registeredCourses state)
+    const saved = localStorage.getItem('registeredCourses');
+    const currentRegistered = saved ? JSON.parse(saved) : [];
+    const newRegisteredCourses = currentRegistered.filter(
+      (c) => c.id !== request.course.id
+    );
+    // Update localStorage so student sees the change on next login / reload
+    localStorage.setItem('registeredCourses', JSON.stringify(newRegisteredCourses));
+    // If a student is currently viewing (same session), update state too
+    setRegisteredCourses(newRegisteredCourses);
+
+    // Mark request as approved
+    const updated = dropRequests.map((r) =>
+      r.id === requestId ? { ...r, status: 'approved', resolvedAt: new Date().toISOString() } : r
+    );
+    setDropRequests(updated);
+    localStorage.setItem('dropRequests', JSON.stringify(updated));
+    showToast('Drop request approved. Course removed from student schedule.', 'success');
+  };
+
+  const rejectDrop = (requestId) => {
+    const updated = dropRequests.map((r) =>
+      r.id === requestId ? { ...r, status: 'rejected', resolvedAt: new Date().toISOString() } : r
+    );
+    setDropRequests(updated);
+    localStorage.setItem('dropRequests', JSON.stringify(updated));
+    showToast('Drop request rejected.', 'error');
+  };
+
   // Toast notification
   const showToast = (message, type = 'info') => {
     setToast({ show: true, message, type });
@@ -114,6 +176,7 @@ export const AppProvider = ({ children }) => {
     isAuthenticated,
     courseList,
     registeredCourses,
+    dropRequests,
     toast,
     // Actions
     login,
@@ -123,6 +186,9 @@ export const AppProvider = ({ children }) => {
     deleteCourse,
     registerCourse,
     unregisterCourse,
+    requestDrop,
+    approveDrop,
+    rejectDrop,
     showToast
   };
 

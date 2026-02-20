@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
+import Modal from './Modal';
 
 const Sidebar = () => {
   const { userRole, logout } = useAppContext();
@@ -41,7 +42,7 @@ const Sidebar = () => {
             🎓
           </div>
           <h2 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
-            Course Hub
+            CourseCrafter
           </h2>
         </div>
       </div>
@@ -104,41 +105,48 @@ const Sidebar = () => {
 
       {/* Logout Section */}
       <div className="p-4 border-t border-slate-700/50">
-        {confirmLogout ? (
-          /* Inline confirmation — no annoying browser dialog */
-          <div className="bg-red-950/60 border border-red-800/50 rounded-xl p-4 space-y-3">
-            <p className="text-sm text-red-200 font-medium text-center">
-              Sign out of Course Hub?
-            </p>
-            <div className="flex gap-2">
-              <button
-                onClick={handleLogout}
-                className="flex-1 bg-red-600 hover:bg-red-500 text-white py-2 rounded-lg text-sm font-semibold transition-colors"
-              >
-                Yes, Logout
-              </button>
-              <button
-                onClick={() => setConfirmLogout(false)}
-                className="flex-1 bg-slate-700 hover:bg-slate-600 text-slate-200 py-2 rounded-lg text-sm font-semibold transition-colors"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        ) : (
-          <button
-            onClick={() => setConfirmLogout(true)}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-red-600/20 hover:text-red-400 hover:border-red-500/30 border border-transparent transition-all duration-300 font-medium group"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <button
+          onClick={() => setConfirmLogout(true)}
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-red-600/20 hover:text-red-400 hover:border-red-500/30 border border-transparent transition-all duration-300 font-medium group"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+          <span>Logout</span>
+        </button>
+      </div>
+
+      {/* Centered Logout Confirmation Modal */}
+      <Modal isOpen={confirmLogout} onClose={() => setConfirmLogout(false)} title="Confirm Logout">
+        <div className="flex flex-col items-center gap-6">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
               <polyline points="16 17 21 12 16 7" />
               <line x1="21" y1="12" x2="9" y2="12" />
             </svg>
-            <span>Logout</span>
-          </button>
-        )}
-      </div>
+          </div>
+          <p className="text-slate-600 text-center text-base">
+            Are you sure you want to sign out of <span className="font-semibold text-slate-800">CourseCrafter</span>?
+          </p>
+          <div className="flex gap-3 w-full">
+            <button
+              onClick={() => setConfirmLogout(false)}
+              className="flex-1 px-4 py-2.5 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 font-semibold transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleLogout}
+              className="flex-1 px-4 py-2.5 rounded-lg bg-red-600 hover:bg-red-500 text-white font-semibold transition-colors"
+            >
+              Yes, Logout
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

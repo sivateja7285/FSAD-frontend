@@ -75,7 +75,7 @@ const Signup = () => {
           <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center text-5xl mx-auto mb-8 shadow-2xl">
             🎓
           </div>
-          <h1 className="text-4xl font-bold mb-4">Join Course Hub</h1>
+          <h1 className="text-4xl font-bold mb-4">Join CourseCrafter</h1>
           <p className="text-lg text-indigo-100 leading-relaxed">
             Create your account in seconds and start planning your academic
             journey today.
