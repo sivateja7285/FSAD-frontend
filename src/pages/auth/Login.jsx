@@ -1,31 +1,19 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAppContext } from '../../context/AppContext';
 
 const Login = () => {
   const [selectedRole, setSelectedRole] = useState('student');
-  const [username, setUsername] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const { login } = useAppContext();
   const navigate = useNavigate();
 
-  // Demo credentials
-  const validCredentials = {
-    student: { username: 'student', password: 'student123' },
-    admin: { username: 'admin', password: 'admin123' }
-  };
-
   const handleLogin = (e) => {
     e.preventDefault();
     setError('');
-
-    // Validate credentials
-    const credentials = validCredentials[selectedRole];
-    if (username !== credentials.username || password !== credentials.password) {
-      setError('Invalid username or password');
-      return;
-    }
 
     login(selectedRole);
     
@@ -69,28 +57,37 @@ const Login = () => {
           {/* Login Card */}
           <div className="bg-white rounded-xl shadow-lg p-8 transition-all duration-300 hover:shadow-xl">
             <div className="mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+              <h2 className="text-3xl font-bold text-gray-900 mb-1">
                 Welcome Back
               </h2>
-              <p className="text-gray-600">
-                Sign in to continue to your account
+              <p className="text-gray-500 text-sm">
+                Don't have an account?{' '}
+                <Link
+                  to="/signup"
+                  className="text-indigo-600 hover:text-indigo-700 font-semibold"
+                >
+                  Sign up
+                </Link>
               </p>
             </div>
 
             <form onSubmit={handleLogin} className="space-y-5">
-              {/* Username Input */}
+              {/* Email or Username Input */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Username
+                  Email or Username
                 </label>
-                <input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
-                  placeholder="Enter username"
-                />
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">✉️</span>
+                  <input
+                    type="text"
+                    value={identifier}
+                    onChange={(e) => setIdentifier(e.target.value)}
+                    required
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+                    placeholder="you@example.com or username"
+                  />
+                </div>
               </div>
 
               {/* Password Input */}
@@ -98,14 +95,24 @@ const Login = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Password
                 </label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
-                  placeholder="Enter password"
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    className="w-full px-4 py-3 pr-11 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+                    placeholder="Enter password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((v) => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? '🙈' : '👁️'}
+                  </button>
+                </div>
               </div>
 
               {/* Error Message */}
@@ -178,14 +185,7 @@ const Login = () => {
               </button>
             </form>
 
-            {/* Demo Credentials */}
-            <div className="mt-6 p-4 bg-gray-100 rounded-lg">
-              <p className="text-sm font-semibold text-gray-700 mb-2">Demo Credentials:</p>
-              <div className="text-xs text-gray-600 space-y-1">
-                <div><strong>Student:</strong> username: <code className="bg-white px-2 py-1 rounded">student</code> password: <code className="bg-white px-2 py-1 rounded">student123</code></div>
-                <div><strong>Admin:</strong> username: <code className="bg-white px-2 py-1 rounded">admin</code> password: <code className="bg-white px-2 py-1 rounded">admin123</code></div>
-              </div>
-            </div>
+
           </div>
         </div>
       </div>

@@ -5,6 +5,7 @@ import Toast from './components/Toast';
 
 // Auth Pages
 import Login from './pages/auth/Login';
+import Signup from './pages/auth/Signup';
 
 // Student Pages
 import StudentDashboard from './pages/student/StudentDashboard';
@@ -27,6 +28,14 @@ function App() {
             element={
               <PublicRoute>
                 <Login />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <PublicRoute>
+                <Signup />
               </PublicRoute>
             }
           />
