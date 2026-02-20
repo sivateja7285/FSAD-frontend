@@ -1,14 +1,19 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Layout from '../../components/Layout';
 import Modal from '../../components/Modal';
 import { useAppContext } from '../../context/AppContext';
 
 const ManageCourses = () => {
-  const { courseList, addCourse, updateCourse, deleteCourse } =
+  const { courseList, addCourse, updateCourse, deleteCourse, showToast } =
     useAppContext();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterDay, setFilterDay] = useState('All');
+  const [sortBy, setSortBy] = useState('courseCode');
+  const [sortOrder, setSortOrder] = useState('asc');
+  
   const [formData, setFormData] = useState({
     courseCode: '',
     courseName: '',
@@ -18,6 +23,52 @@ const ManageCourses = () => {
     startTime: '',
     endTime: ''
   });
+
+  // Filter and sort courses
+  const filteredAndSortedCourses = useMemo(() => {
+    let filtered = courseList.filter((course) => {
+      const matchesSearch =
+        course.courseCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        course.courseName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        course.instructor.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const matchesDay = filterDay === 'All' || course.day === filterDay;
+      
+      return matchesSearch && matchesDay;
+    });
+
+    // Sort filtered courses
+    filtered.sort((a, b) => {
+      let aValue = a[sortBy];
+      let bValue = b[sortBy];
+      
+      // Handle numeric sorting for credits
+      if (sortBy === 'credits') {
+        aValue = Number(aValue);
+        bValue = Number(bValue);
+      } else {
+        // String sorting
+        aValue = String(aValue).toLowerCase();
+        bValue = String(bValue).toLowerCase();
+      }
+      
+      if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    return filtered;
+  }, [courseList, searchTerm, filterDay, sortBy, sortOrder]);
+
+  // Toggle sort order
+  const handleSort = (field) => {
+    if (sortBy === field) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(field);
+      setSortOrder('asc');
+    }
+  };
 
   const handleOpenModal = (course = null) => {
     if (course) {
@@ -45,6 +96,12 @@ const ManageCourses = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Validate time
+    if (formData.startTime >= formData.endTime) {
+      showToast('End time must be after start time', 'error');
+      return;
+    }
 
     const courseData = {
       ...formData,
@@ -87,29 +144,138 @@ const ManageCourses = () => {
           </button>
         </div>
 
+        {/* Search and Filter Bar */}
+        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="md:col-span-2">
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
+                Search Courses
+              </label>
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search by code, name, or instructor..."
+                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
+                Filter by Day
+              </label>
+              <select
+                value={filterDay}
+                onChange={(e) => setFilterDay(e.target.value)}
+                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="All">All Days</option>
+                <option value="Monday">Monday</option>
+                <option value="Tuesday">Tuesday</option>
+                <option value="Wednesday">Wednesday</option>
+                <option value="Thursday">Thursday</option>
+                <option value="Friday">Friday</option>
+              </select>
+            </div>
+          </div>
+          {(searchTerm || filterDay !== 'All') && (
+            <div className="mt-4 flex items-center justify-between">
+              <p className="text-sm text-slate-600">
+                Showing <span className="font-bold text-blue-600">{filteredAndSortedCourses.length}</span> of{' '}
+                <span className="font-bold text-blue-600">{courseList.length}</span> courses
+              </p>
+              <button
+                onClick={() => {
+                  setSearchTerm('');
+                  setFilterDay('All');
+                }}
+                className="text-sm text-blue-600 hover:text-blue-700 font-semibold"
+              >
+                Clear Filters
+              </button>
+            </div>
+          )}
+        </div>
+
         {/* Courses Table */}
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-slate-800 text-white">
-                <tr>
-                  <th className="px-6 py-3 text-left font-semibold">Code</th>
-                  <th className="px-6 py-3 text-left font-semibold">
-                    Course Name
-                  </th>
-                  <th className="px-6 py-3 text-left font-semibold">
-                    Instructor
-                  </th>
-                  <th className="px-6 py-3 text-left font-semibold">Credits</th>
-                  <th className="px-6 py-3 text-left font-semibold">Day</th>
-                  <th className="px-6 py-3 text-left font-semibold">Time</th>
-                  <th className="px-6 py-3 text-center font-semibold">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {courseList.map((course, index) => (
+          {filteredAndSortedCourses.length === 0 ? (
+            <div className="p-12 text-center">
+              <div className="text-6xl mb-4">📭</div>
+              <p className="text-slate-500 text-lg mb-2">No courses found</p>
+              <p className="text-slate-400 text-sm">
+                {searchTerm || filterDay !== 'All'
+                  ? 'Try adjusting your filters'
+                  : 'Add your first course to get started'}
+              </p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-slate-800 text-white">
+                  <tr>
+                    <th 
+                      className="px-6 py-3 text-left font-semibold cursor-pointer hover:bg-slate-700 transition-colors"
+                      onClick={() => handleSort('courseCode')}
+                    >
+                      <div className="flex items-center gap-2">
+                        Code
+                        {sortBy === 'courseCode' && (
+                          <span>{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                        )}
+                      </div>
+                    </th>
+                    <th 
+                      className="px-6 py-3 text-left font-semibold cursor-pointer hover:bg-slate-700 transition-colors"
+                      onClick={() => handleSort('courseName')}
+                    >
+                      <div className="flex items-center gap-2">
+                        Course Name
+                        {sortBy === 'courseName' && (
+                          <span>{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                        )}
+                      </div>
+                    </th>
+                    <th 
+                      className="px-6 py-3 text-left font-semibold cursor-pointer hover:bg-slate-700 transition-colors"
+                      onClick={() => handleSort('instructor')}
+                    >
+                      <div className="flex items-center gap-2">
+                        Instructor
+                        {sortBy === 'instructor' && (
+                          <span>{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                        )}
+                      </div>
+                    </th>
+                    <th 
+                      className="px-6 py-3 text-left font-semibold cursor-pointer hover:bg-slate-700 transition-colors"
+                      onClick={() => handleSort('credits')}
+                    >
+                      <div className="flex items-center gap-2">
+                        Credits
+                        {sortBy === 'credits' && (
+                          <span>{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                        )}
+                      </div>
+                    </th>
+                    <th 
+                      className="px-6 py-3 text-left font-semibold cursor-pointer hover:bg-slate-700 transition-colors"
+                      onClick={() => handleSort('day')}
+                    >
+                      <div className="flex items-center gap-2">
+                        Day
+                        {sortBy === 'day' && (
+                          <span>{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                        )}
+                      </div>
+                    </th>
+                    <th className="px-6 py-3 text-left font-semibold">Time</th>
+                    <th className="px-6 py-3 text-center font-semibold">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredAndSortedCourses.map((course, index) => (
                   <tr
                     key={course.id}
                     className={`${
@@ -153,6 +319,7 @@ const ManageCourses = () => {
               </tbody>
             </table>
           </div>
+        )}
         </div>
       </div>
 
